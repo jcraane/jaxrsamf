@@ -10,6 +10,19 @@ public class Person implements Serializable {
     private String firstName;
     private String lastName;
 
+    public static Person create(final Long id, final String firstName, final String lastName) {
+        Person person = new Person();
+        person.setId(id);
+        person.setFirstName(firstName);
+        person.setLastName(lastName);
+        return person;
+    }
+
+    public void merge(final Person person) {
+        this.firstName = person.firstName;
+        this.lastName = person.lastName;
+    }
+
     public Long getId() {
         return id;
     }
