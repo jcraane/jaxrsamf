@@ -3,7 +3,7 @@ package nl.capaxit.jaxrsamf.providers;
 import flex.messaging.io.SerializationContext;
 import flex.messaging.io.amf.Amf3Input;
 import flex.messaging.io.amf.Amf3Output;
-import nl.capaxit.jaxrsamf.endpoint.Constants;
+import nl.capaxit.jaxrsamf.endpoint.MediaTypes;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -23,8 +23,8 @@ import java.lang.reflect.Type;
  * @author Jamie Craane
  */
 @Provider
-@Produces(Constants.APPLICATION_X_AMF)
-@Consumes(Constants.APPLICATION_X_AMF)
+@Produces(MediaTypes.APPLICATION_X_AMF)
+@Consumes(MediaTypes.APPLICATION_X_AMF)
 public class AmfProvider implements MessageBodyReader<Object>, MessageBodyWriter<Object> {
     public boolean isReadable(Class realType, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return true; //we'll assume everything is readable, for now.

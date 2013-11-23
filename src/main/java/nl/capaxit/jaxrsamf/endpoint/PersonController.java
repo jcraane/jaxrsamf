@@ -31,8 +31,8 @@ import java.util.List;
  */
 @Component
 // Somehow, the application/x-amf should be declared first.
-@Produces({Constants.APPLICATION_X_AMF, MediaType.APPLICATION_JSON})
-@Consumes({Constants.APPLICATION_X_AMF, MediaType.APPLICATION_JSON})
+@Produces({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON})
+@Consumes({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON})
 @Path("/persons")
 public class PersonController {
     @Autowired
