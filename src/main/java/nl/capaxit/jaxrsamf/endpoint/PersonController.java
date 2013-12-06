@@ -47,6 +47,15 @@ public class PersonController {
         return personMapper.retrievePersons();
     }
 
+//    @Produces("application/xml")
+    /*@GET
+    public PersonResponse retrieveXml() {
+        final List<Person> persons = personMapper.retrievePersons();
+        final PersonResponse responseWrapper = new PersonResponse();
+        responseWrapper.setPersons(persons);
+        return responseWrapper;
+    }*/
+
     /**
      * Retrieves a single person. Throws a WebApplicationException of the person does not exist which translates
      * to a 404 on the client side.
@@ -77,6 +86,8 @@ public class PersonController {
      * @return
      */
     @POST
+    @Produces({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON, "application/xml"})
+    @Consumes({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON, "application/xml"})
     public Response create(final Person person, @Context final HttpServletResponse response) {
         personMapper.create(person);
         UriBuilder uriBuilder = UriBuilder.fromUri(uriInfo.getRequestUri());
