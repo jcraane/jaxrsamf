@@ -30,9 +30,8 @@ import java.util.List;
  * @author Jamie Craane
  */
 @Component
-// Somehow, the application/x-amf should be declared first.
-@Produces({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON})
-@Consumes({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON})
+@Produces({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+@Consumes({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Path("/persons")
 public class PersonController {
     @Autowired
@@ -47,8 +46,8 @@ public class PersonController {
         return personMapper.retrievePersons();
     }
 
-//    @Produces("application/xml")
-    /*@GET
+    /*@Produces("application/xml")
+    @GET
     public PersonResponse retrieveXml() {
         final List<Person> persons = personMapper.retrievePersons();
         final PersonResponse responseWrapper = new PersonResponse();
@@ -86,15 +85,12 @@ public class PersonController {
      * @return
      */
     @POST
-    @Produces({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON, "application/xml"})
-    @Consumes({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON, "application/xml"})
     public Response create(final Person person, @Context final HttpServletResponse response) {
         personMapper.create(person);
         UriBuilder uriBuilder = UriBuilder.fromUri(uriInfo.getRequestUri());
         uriBuilder.path(String.valueOf(person.getId()));
         return Response.created(uriBuilder.build()).
                 entity(person).
-                type(MediaType.APPLICATION_JSON).
                 build();
     }
 
