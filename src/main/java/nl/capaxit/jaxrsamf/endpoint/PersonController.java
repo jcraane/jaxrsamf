@@ -35,6 +35,7 @@ import java.util.Locale;
  * the Content-Type (what the server can expect) headers.
  *
  * TODO: Integrate bean validation framework instead of custom validator.
+ * TODO: Add error translation for XML.
  *
  * @author Jamie Craane
  */
