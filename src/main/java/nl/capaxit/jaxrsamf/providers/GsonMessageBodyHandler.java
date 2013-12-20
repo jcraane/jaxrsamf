@@ -2,6 +2,8 @@ package nl.capaxit.jaxrsamf.providers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import nl.capaxit.jaxrsamf.providers.gson.DateDeserializer;
+import nl.capaxit.jaxrsamf.providers.gson.DateSerializer;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -10,9 +12,15 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Date;
 
 /**
  * @author Jamie Craane
@@ -28,6 +36,8 @@ public final class GsonMessageBodyHandler implements MessageBodyWriter<Object>, 
     private Gson getGson() {
         if (gson == null) {
             final GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.registerTypeAdapter(Date.class, new DateDeserializer());
+            gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer());
             gson = gsonBuilder.create();
         }
         return gson;

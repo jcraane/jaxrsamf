@@ -46,6 +46,7 @@ public class PersonController {
         return personMapper.retrievePersons();
     }
 
+    // TODO: Re-add this.
     /*@Produces("application/xml")
     @GET
     public PersonResponse retrieveXml() {

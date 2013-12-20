@@ -4,6 +4,7 @@ import nl.capaxit.jaxrsamf.domain.Person;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +20,9 @@ public class InMemoryPersonMapper implements PersonMapper {
 
     {
         long id = ID_GENERATOR.incrementAndGet();
-        STORE.put(id, Person.create(id, "John", "Smith"));
+        STORE.put(id, Person.create(id, "John", "Smith", new Date()));
         id = ID_GENERATOR.incrementAndGet();
-        STORE.put(id, Person.create(id, "John", "Stuart"));
+        STORE.put(id, Person.create(id, "John", "Stuart", new Date()));
     }
 
     @Override

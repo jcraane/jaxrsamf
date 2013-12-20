@@ -22,7 +22,7 @@ repositories {
 dependencies {
     compile 'com.sun.jersey:jersey-server:1.8',
             'com.sun.jersey:jersey-core:1.8',
-            'com.google.guava:guava:14.0.1',
+            'com.google.guava:guava:15.0',
             'com.google.code.gson:gson:2.2.2',
             'org.slf4j:slf4j-api:1.7.0',
             'org.slf4j:jcl-over-slf4j:1.7.0',

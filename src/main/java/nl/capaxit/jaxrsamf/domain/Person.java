@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @author Jamie Craane
@@ -20,11 +21,14 @@ public class Person implements Serializable {
     @XmlElement(required = true)
     private String lastName;
 
-    public static Person create(final Long id, final String firstName, final String lastName) {
+    private Date birthDate;
+
+    public static Person create(final Long id, final String firstName, final String lastName, final Date birthDate) {
         Person person = new Person();
-        person.setId(id);
-        person.setFirstName(firstName);
-        person.setLastName(lastName);
+        person.id = id;
+        person.firstName = firstName;
+        person.lastName = lastName;
+        person.birthDate = birthDate;
         return person;
     }
 
@@ -55,5 +59,13 @@ public class Person implements Serializable {
 
     public void setLastName(final String lastName) {
         this.lastName = lastName;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(final Date birthDate) {
+        this.birthDate = birthDate;
     }
 }
