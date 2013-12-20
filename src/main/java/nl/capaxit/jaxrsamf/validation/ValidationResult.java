@@ -2,6 +2,7 @@ package nl.capaxit.jaxrsamf.validation;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,6 +46,18 @@ public class ValidationResult implements Iterable<ValidationError> {
         }
 
         return Optional.of(validationErrors.get(0));
+    }
+
+    public int size() {
+        return validationErrors.size();
+    }
+
+    public boolean hasErrors() {
+        return validationErrors.size() > 0;
+    }
+
+    public List<ValidationError> getValidationErrors() {
+        return Lists.newArrayList(validationErrors);
     }
 
     @Override

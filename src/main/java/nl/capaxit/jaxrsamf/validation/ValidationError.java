@@ -6,19 +6,21 @@ package nl.capaxit.jaxrsamf.validation;
  * Created by jcraane on 01/11/13.
  */
 public final class ValidationError {
-    private ValidationError(final String messageKey) {
+    private ValidationError(final String messageKey, final String[] args) {
         this.messageKey = messageKey;
+        this.args = args;
     }
 
     private final String messageKey;
+    private final String[] args;
 
     /**
      * Creates a validation error with the resource id of the message to show.
-     * @param resourceId The resource id with the message association with this ValidationError.
+     * @param messageKey The resource id with the message association with this ValidationError.
      * @return ValidationError.
      */
-    public static ValidationError forMessageKey(final String resourceId) {
-        return new ValidationError(resourceId);
+    public static ValidationError forMessageKey(final String messageKey, final String ... args) {
+        return new ValidationError(messageKey, args);
     }
 
     /**
@@ -26,6 +28,10 @@ public final class ValidationError {
      */
     public String getMessageKey() {
         return messageKey;
+    }
+
+    public String[] getArguments() {
+        return args;
     }
 
     @Override

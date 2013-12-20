@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author Jamie Craane
@@ -67,5 +68,30 @@ public class Person implements Serializable {
 
     public void setBirthDate(final Date birthDate) {
         this.birthDate = birthDate;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof Person)) {
+            return false;
+        }
+
+        Person other = (Person) obj;
+        return Objects.equals(this.id, other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.id);
+    }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.Objects.toStringHelper(this)
+            .add("id", id)
+            .add("firstName", firstName)
+            .add("lastName", lastName)
+            .add("birthDate", birthDate)
+            .toString();
     }
 }

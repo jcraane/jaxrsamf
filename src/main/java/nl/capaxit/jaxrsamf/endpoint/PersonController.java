@@ -2,8 +2,14 @@ package nl.capaxit.jaxrsamf.endpoint;
 
 import nl.capaxit.jaxrsamf.domain.Person;
 import nl.capaxit.jaxrsamf.domain.mapper.PersonMapper;
+import nl.capaxit.jaxrsamf.validation.ValidationResult;
+import nl.capaxit.jaxrsamf.validation.WebApplicationExceptionFactory;
+import nl.capaxit.jaxrsamf.validation.person.PersonValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
@@ -22,10 +28,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Person controller. Content negotiaton is done using the Accept (what the client wants as response) and
  * the Content-Type (what the server can expect) headers.
+ *
+ * TODO: Integrate bean validation framework instead of custom validator.
  *
  * @author Jamie Craane
  */
@@ -34,15 +43,22 @@ import java.util.List;
 @Consumes({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Path("/persons")
 public class PersonController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonController.class);
+
     @Autowired
     @Qualifier("inMemoryPersonMapper")
     private PersonMapper personMapper;
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Context
     private UriInfo uriInfo;
 
     @GET
     public List<Person> retrieve() {
+        LOGGER.debug("retrieve()");
+
         return personMapper.retrievePersons();
     }
 
@@ -65,6 +81,8 @@ public class PersonController {
     @GET
     @Path("/{id}")
     public Person retrieve(@PathParam("id") Long id) {
+        LOGGER.debug("retrieve(id)({})", id);
+
         Person person = personMapper.retrieve(id);
 
         if (person == null) {
@@ -87,12 +105,25 @@ public class PersonController {
      */
     @POST
     public Response create(final Person person, @Context final HttpServletResponse response) {
+        LOGGER.debug("create(person, response)({})", person);
+
+        validatePerson(person);
+
         personMapper.create(person);
         UriBuilder uriBuilder = UriBuilder.fromUri(uriInfo.getRequestUri());
         uriBuilder.path(String.valueOf(person.getId()));
         return Response.created(uriBuilder.build()).
                 entity(person).
                 build();
+    }
+
+    private void validatePerson(final Person person) {
+        final PersonValidator validator = new PersonValidator();
+        final ValidationResult errors = validator.validate(person);
+        if (errors.hasErrors()) {
+            final WebApplicationException ex = WebApplicationExceptionFactory.forValidationResult(messageSource, new Locale("NL"), errors);
+            throw ex;
+        }
     }
 
     /**
@@ -103,6 +134,10 @@ public class PersonController {
     @PUT
     @Path("/{id}")
     public void update(final Person person, @PathParam("id") Long id) {
+        LOGGER.debug("update(person, id)({},{})", person, id);
+
+        validatePerson(person);
+
         Person updated = personMapper.update(person, id);
         if (updated == null) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
@@ -115,6 +150,8 @@ public class PersonController {
     @DELETE
     @Path("/{id}")
     public void delete(@PathParam("id") final Long id) {
+        LOGGER.debug("delete(id)({})", id);
+
         if (personMapper.retrieve(id) == null) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
         }
