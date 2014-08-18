@@ -1,7 +1,11 @@
-package nl.capaxit.jaxrsamf.endpoint;
+package nl.capaxit.jaxrsamf.resources;
 
 import nl.capaxit.jaxrsamf.domain.Person;
+import nl.capaxit.jaxrsamf.domain.mapper.InMemoryPersonMapper;
 import nl.capaxit.jaxrsamf.domain.mapper.PersonMapper;
+import nl.capaxit.jaxrsamf.jaxrs.links.LinkFactory;
+import nl.capaxit.jaxrsamf.jaxrs.links.QueryParameter;
+import nl.capaxit.jaxrsamf.jaxrs.response.GenericResponse;
 import nl.capaxit.jaxrsamf.validation.ValidationResult;
 import nl.capaxit.jaxrsamf.validation.WebApplicationExceptionFactory;
 import nl.capaxit.jaxrsamf.validation.person.PersonValidator;
@@ -13,20 +17,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+import java.net.URI;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,21 +27,19 @@ import java.util.Locale;
  * Person controller. Content negotiaton is done using the Accept (what the client wants as response) and
  * the Content-Type (what the server can expect) headers.
  *
- * TODO: Integrate bean validation framework instead of custom validator.
- * TODO: Add error translation for XML.
- *
  * @author Jamie Craane
  */
 @Component
-@Produces({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-@Consumes({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+@Produces({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON})
+@Consumes({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON})
 @Path("/persons")
-public class PersonController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PersonController.class);
+public class PersonResource {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PersonResource.class);
 
+    // TODO: How to inject without Spring in servlet environment?
     @Autowired
     @Qualifier("inMemoryPersonMapper")
-    private PersonMapper personMapper;
+    private static PersonMapper personMapper = new InMemoryPersonMapper();
 
     @Autowired
     private MessageSource messageSource;
@@ -57,21 +48,18 @@ public class PersonController {
     private UriInfo uriInfo;
 
     @GET
-    public List<Person> retrieve() {
+    public GenericResponse<List<Person>> retrieve() {
         LOGGER.debug("retrieve()");
 
-        return personMapper.retrievePersons();
-    }
-
-    // TODO: Re-add this.
-    /*@Produces("application/xml")
-    @GET
-    public PersonResponse retrieveXml() {
         final List<Person> persons = personMapper.retrievePersons();
-        final PersonResponse responseWrapper = new PersonResponse();
-        responseWrapper.setPersons(persons);
-        return responseWrapper;
-    }*/
+        for (final Person person : persons) {
+            person.setDetails(Link.fromUri(uriInfo.getAbsolutePathBuilder().path(Long.toString(person.getId())).build()).build());
+        }
+
+        final URI self = uriInfo.getAbsolutePathBuilder().build();
+        final Link link = Link.fromUri(self).rel("self").build();
+        return new GenericResponse<>(link, persons);
+    }
 
     /**
      * Retrieves a single person. Throws a WebApplicationException of the person does not exist which translates
@@ -81,7 +69,7 @@ public class PersonController {
      */
     @GET
     @Path("/{id}")
-    public Person retrieve(@PathParam("id") Long id) {
+    public Person retrievePerson(@PathParam("id") Long id) {
         LOGGER.debug("retrieve(id)({})", id);
 
         Person person = personMapper.retrieve(id);

@@ -1,5 +1,6 @@
 package nl.capaxit.jaxrsamf.domain;
 
+import javax.ws.rs.core.Link;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -15,6 +16,8 @@ import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Person implements Serializable {
     private Long id;
+
+    private Link details;
 
     @XmlElement(required = true)
     private String firstName;
@@ -36,6 +39,14 @@ public class Person implements Serializable {
     public void merge(final Person person) {
         this.firstName = person.firstName;
         this.lastName = person.lastName;
+    }
+
+    public Link getDetails() {
+        return details;
+    }
+
+    public void setDetails(final Link details) {
+        this.details = details;
     }
 
     public Long getId() {

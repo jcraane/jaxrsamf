@@ -1,4 +1,4 @@
-package nl.capaxit.jaxrsamf.providers.gson;
+package nl.capaxit.jaxrsamf.jaxrs.providers.gson;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;

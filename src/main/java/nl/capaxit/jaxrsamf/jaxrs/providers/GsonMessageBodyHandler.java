@@ -1,9 +1,9 @@
-package nl.capaxit.jaxrsamf.providers;
+package nl.capaxit.jaxrsamf.jaxrs.providers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import nl.capaxit.jaxrsamf.providers.gson.DateDeserializer;
-import nl.capaxit.jaxrsamf.providers.gson.DateSerializer;
+import nl.capaxit.jaxrsamf.jaxrs.providers.gson.DateDeserializer;
+import nl.capaxit.jaxrsamf.jaxrs.providers.gson.DateSerializer;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;

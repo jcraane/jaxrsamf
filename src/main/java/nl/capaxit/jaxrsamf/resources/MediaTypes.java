@@ -1,4 +1,4 @@
-package nl.capaxit.jaxrsamf.endpoint;
+package nl.capaxit.jaxrsamf.resources;
 
 /**
  * @author Jamie Craane

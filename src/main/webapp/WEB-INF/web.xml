@@ -2,35 +2,21 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-		  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-         version="2.5">
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/applicationContext.xml</param-value>
-    </context-param>
-
-    <listener>
-        <listener-class>
-            org.springframework.web.context.ContextLoaderListener
-        </listener-class>
-    </listener>
+		  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
 
     <servlet>
-        <servlet-name>Jersey Servlet</servlet-name>
-        <servlet-class>
-            com.sun.jersey.spi.spring.container.servlet.SpringServlet
-        </servlet-class>
+        <servlet-name>api</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
-            <param-name>
-                com.sun.jersey.config.property.packages
-            </param-name>
-            <param-value>nl.capaxit.jaxrsamf.endpoint, nl.capaxit.jaxrsamf.providers</param-value>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>nl.capaxit.jaxrsamf</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Jersey Servlet</servlet-name>
-        <url-pattern>/api/*</url-pattern>
+        <servlet-name>api</servlet-name>
+        <url-pattern>/v1/*</url-pattern>
     </servlet-mapping>
 </web-app>

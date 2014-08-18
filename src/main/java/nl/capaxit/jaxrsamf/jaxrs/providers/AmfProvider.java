@@ -1,9 +1,9 @@
-package nl.capaxit.jaxrsamf.providers;
+package nl.capaxit.jaxrsamf.jaxrs.providers;
 
 import flex.messaging.io.SerializationContext;
 import flex.messaging.io.amf.Amf3Input;
 import flex.messaging.io.amf.Amf3Output;
-import nl.capaxit.jaxrsamf.endpoint.MediaTypes;
+import nl.capaxit.jaxrsamf.resources.MediaTypes;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -38,7 +38,7 @@ public class AmfProvider implements MessageBodyReader<Object>, MessageBodyWriter
               MultivaluedMap httpHeaders,
               InputStream stream)
         throws IOException, WebApplicationException {
-        SerializationContext context = new SerializationContext();
+        flex.messaging.io.SerializationContext context = new SerializationContext();
         Amf3Input input = new Amf3Input(context);
         input.setInputStream(stream);
           try {
