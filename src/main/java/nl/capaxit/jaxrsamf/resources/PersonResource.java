@@ -3,8 +3,6 @@ package nl.capaxit.jaxrsamf.resources;
 import nl.capaxit.jaxrsamf.domain.Person;
 import nl.capaxit.jaxrsamf.domain.mapper.InMemoryPersonMapper;
 import nl.capaxit.jaxrsamf.domain.mapper.PersonMapper;
-import nl.capaxit.jaxrsamf.jaxrs.links.LinkFactory;
-import nl.capaxit.jaxrsamf.jaxrs.links.QueryParameter;
 import nl.capaxit.jaxrsamf.jaxrs.response.GenericResponse;
 import nl.capaxit.jaxrsamf.validation.ValidationResult;
 import nl.capaxit.jaxrsamf.validation.WebApplicationExceptionFactory;
@@ -16,6 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -27,16 +26,18 @@ import java.util.Locale;
  * Person controller. Content negotiaton is done using the Accept (what the client wants as response) and
  * the Content-Type (what the server can expect) headers.
  *
+ * Methods always returns a Response object which gives you more options in determining what to return to the client in
+ * terms of headers for example or response codes.
+ *
  * @author Jamie Craane
  */
 @Component
-@Produces({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON})
-@Consumes({MediaTypes.APPLICATION_X_AMF, MediaType.APPLICATION_JSON})
+@Produces({MediaType.APPLICATION_JSON})
+@Consumes({MediaType.APPLICATION_JSON})
 @Path("/persons")
 public class PersonResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonResource.class);
 
-    // TODO: How to inject without Spring in servlet environment?
     @Autowired
     @Qualifier("inMemoryPersonMapper")
     private static PersonMapper personMapper = new InMemoryPersonMapper();
@@ -48,7 +49,7 @@ public class PersonResource {
     private UriInfo uriInfo;
 
     @GET
-    public GenericResponse<List<Person>> retrieve() {
+    public Response retrieve(@Context final HttpServletRequest request) {
         LOGGER.debug("retrieve()");
 
         final List<Person> persons = personMapper.retrievePersons();
@@ -57,8 +58,14 @@ public class PersonResource {
         }
 
         final URI self = uriInfo.getAbsolutePathBuilder().build();
-        final Link link = Link.fromUri(self).rel("self").build();
-        return new GenericResponse<>(link, persons);
+        final Link link = Link.fromUri(self).build();
+
+        final CacheControl cacheControl = new CacheControl();
+//        cacheControl.setMaxAge(86400); // One day.
+//        cacheControl.setPrivate(true);
+
+//        return Response.ok().entity(new GenericResponse<>(link, persons)).cacheControl(cacheControl).build();
+        return Response.ok().entity(new GenericResponse<>(link, persons)).build();
     }
 
     /**
@@ -69,7 +76,7 @@ public class PersonResource {
      */
     @GET
     @Path("/{id}")
-    public Person retrievePerson(@PathParam("id") Long id) {
+    public Response retrievePerson(@PathParam("id") Long id) {
         LOGGER.debug("retrieve(id)({})", id);
 
         Person person = personMapper.retrieve(id);
@@ -78,7 +85,7 @@ public class PersonResource {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
         }
 
-        return person;
+        return Response.ok().entity(person).build();
     }
 
     /**
@@ -122,7 +129,7 @@ public class PersonResource {
      */
     @PUT
     @Path("/{id}")
-    public void update(final Person person, @PathParam("id") Long id) {
+    public Response update(final Person person, @PathParam("id") Long id) {
         LOGGER.debug("update(person, id)({},{})", person, id);
 
         validatePerson(person);
@@ -131,6 +138,8 @@ public class PersonResource {
         if (updated == null) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
         }
+
+        return Response.noContent().build();
     }
 
     /**
@@ -138,7 +147,7 @@ public class PersonResource {
      */
     @DELETE
     @Path("/{id}")
-    public void delete(@PathParam("id") final Long id) {
+    public Response delete(@PathParam("id") final Long id) {
         LOGGER.debug("delete(id)({})", id);
 
         if (personMapper.retrieve(id) == null) {
@@ -146,5 +155,6 @@ public class PersonResource {
         }
 
         personMapper.delete(id);
+        return Response.noContent().build();
     }
 }

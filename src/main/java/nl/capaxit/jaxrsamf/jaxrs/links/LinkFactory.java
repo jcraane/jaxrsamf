@@ -2,6 +2,7 @@ package nl.capaxit.jaxrsamf.jaxrs.links;
 
 import com.google.common.base.Strings;
 
+import javax.servlet.ServletRequest;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
@@ -18,6 +19,16 @@ public final class LinkFactory {
     /*public static Link fromResource() {
 
     }*/
+
+    public static Link fromServerNameAndPort(final ServletRequest request, final String path, QueryParameter... queryParameters) {
+        final UriBuilder uriBuilder = UriBuilder.fromPath(request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()).path(path);
+
+        for (final QueryParameter queryParameter : queryParameters) {
+            uriBuilder.queryParam(queryParameter.getName(), queryParameter.getValue());
+        }
+
+        return Link.fromUri(uriBuilder.build()).build();
+    }
 
     public static Link fromBaseUri(final UriInfo uriInfo, final String path, QueryParameter... queryParameters) {
         return fromBaseUri(uriInfo, path, "", queryParameters);
