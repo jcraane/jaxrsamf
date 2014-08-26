@@ -1,5 +1,6 @@
 package nl.capaxit.jaxrsamf.resources;
 
+import hirondelle.date4j.DateTime;
 import nl.capaxit.jaxrsamf.domain.Person;
 import nl.capaxit.jaxrsamf.domain.mapper.InMemoryPersonMapper;
 import nl.capaxit.jaxrsamf.domain.mapper.PersonMapper;
@@ -19,8 +20,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Person controller. Content negotiaton is done using the Accept (what the client wants as response) and
@@ -54,18 +57,20 @@ public class PersonResource {
 
         final List<Person> persons = personMapper.retrievePersons();
         for (final Person person : persons) {
-            person.setDetails(Link.fromUri(uriInfo.getAbsolutePathBuilder().path(Long.toString(person.getId())).build()).build());
+            person.setDetails(Link.fromUri(UriBuilder.fromResource(PersonResource.class).path(Long.toString(person.getId())).build()).build());
         }
 
-        final URI self = uriInfo.getAbsolutePathBuilder().build();
+        final URI self = UriBuilder.fromResource(PersonResource.class).build();
         final Link link = Link.fromUri(self).build();
 
         final CacheControl cacheControl = new CacheControl();
 //        cacheControl.setMaxAge(86400); // One day.
 //        cacheControl.setPrivate(true);
 
+        final DateTime expires = DateTime.now(TimeZone.getDefault()).plus(0, 1, 0, 0, 0, 0, 0, DateTime.DayOverflow.Spillover);
+
 //        return Response.ok().entity(new GenericResponse<>(link, persons)).cacheControl(cacheControl).build();
-        return Response.ok().entity(new GenericResponse<>(link, persons)).build();
+        return Response.ok().expires(new Date(expires.getMilliseconds(TimeZone.getDefault()))).entity(new GenericResponse<>(link, persons)).build();
     }
 
     /**
