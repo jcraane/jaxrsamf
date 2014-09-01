@@ -19,8 +19,8 @@ import java.io.IOException;
  */
 @Provider
 @Priority(FilterPriorities.REQUEST_LOGGING)
-public class RequestIdResponseFilter implements ContainerResponseFilter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestIdResponseFilter.class);
+public class RequestIdResponseLogFilter implements ContainerResponseFilter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestIdResponseLogFilter.class);
 
     @Override
     public void filter(final ContainerRequestContext requestContext, final ContainerResponseContext responseContext) throws IOException {

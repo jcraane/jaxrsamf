@@ -20,8 +20,8 @@ import java.util.UUID;
  */
 @Provider
 @Priority(FilterPriorities.REQUEST_LOGGING)
-public class RequestIdRequestFilter implements ContainerRequestFilter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestIdRequestFilter.class);
+public class RequestIdRequestLogFilter implements ContainerRequestFilter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestIdRequestLogFilter.class);
 
     @Override
     public void filter(final ContainerRequestContext requestContext) throws IOException {
