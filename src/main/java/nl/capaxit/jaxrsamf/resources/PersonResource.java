@@ -21,7 +21,6 @@ import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 /**
  * Person controller. Content negotiaton is done using the Accept (what the client wants as response) and
@@ -72,8 +71,6 @@ public class PersonResource {
 
     @Context
     private UriInfo uriInfo;
-
-    private static final Pattern VERSION_PATTERN = Pattern.compile(".*version=(\\d)");
 
     @GET
     public Response retrieve(@Context final HttpServletRequest request) {
