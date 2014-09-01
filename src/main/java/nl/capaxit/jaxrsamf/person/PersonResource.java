@@ -1,7 +1,6 @@
 package nl.capaxit.jaxrsamf.person;
 
 import nl.capaxit.jaxrsamf.generic.ETagMemoryCache;
-import nl.capaxit.jaxrsamf.jaxrs.MediaTypes;
 import nl.capaxit.jaxrsamf.jaxrs.response.GenericResponse;
 import nl.capaxit.jaxrsamf.person.domain.Person;
 import nl.capaxit.jaxrsamf.person.mapper.InMemoryPersonMapper;
@@ -59,8 +58,10 @@ import java.util.Locale;
  * @author Jamie Craane
  */
 @Component
-@Consumes({MediaType.APPLICATION_JSON, MediaTypes.APPLICATION_X_AMF})
-@Produces({"application/json;version=1", MediaTypes.APPLICATION_X_AMF})
+//@Consumes({MediaType.APPLICATION_JSON, MediaTypes.APPLICATION_X_AMF})
+@Consumes({MediaType.APPLICATION_JSON})
+//@Produces({"application/json;version=1", MediaTypes.APPLICATION_X_AMF})
+@Produces({"application/json;version=1"})
 @Path("/v1/persons")
 public class PersonResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonResource.class);
@@ -87,6 +88,7 @@ public class PersonResource {
         }
 
         final String ETag = DigestUtils.md5DigestAsHex(sb.toString().getBytes());
+        ETagMemoryCache.getInstance().setPersonsETag(ETag);
         final EntityTag entityTag = new EntityTag(ETag);
         final Response.ResponseBuilder builder = request.evaluatePreconditions(entityTag);
 
@@ -96,7 +98,6 @@ public class PersonResource {
             return Response.ok().tag(ETag).entity(new GenericResponse<>(link, persons)).build();
         }
 
-        ETagMemoryCache.getInstance().setPersonsETag(ETag);
         return builder.build();
     }
 
