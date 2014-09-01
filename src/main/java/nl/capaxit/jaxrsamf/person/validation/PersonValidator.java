@@ -1,7 +1,7 @@
-package nl.capaxit.jaxrsamf.validation.person;
+package nl.capaxit.jaxrsamf.person.validation;
 
 import com.google.common.base.Strings;
-import nl.capaxit.jaxrsamf.domain.Person;
+import nl.capaxit.jaxrsamf.person.domain.Person;
 import nl.capaxit.jaxrsamf.validation.ValidationError;
 import nl.capaxit.jaxrsamf.validation.ValidationResult;
 import nl.capaxit.jaxrsamf.validation.Validator;

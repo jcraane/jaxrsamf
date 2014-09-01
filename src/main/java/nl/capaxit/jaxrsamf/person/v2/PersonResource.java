@@ -1,12 +1,12 @@
-package nl.capaxit.jaxrsamf.resources;
+package nl.capaxit.jaxrsamf.person.v2;
 
-import nl.capaxit.jaxrsamf.domain.Person;
-import nl.capaxit.jaxrsamf.domain.mapper.InMemoryPersonMapper;
-import nl.capaxit.jaxrsamf.domain.mapper.PersonMapper;
+import nl.capaxit.jaxrsamf.person.domain.Person;
+import nl.capaxit.jaxrsamf.person.mapper.InMemoryPersonMapper;
+import nl.capaxit.jaxrsamf.person.mapper.PersonMapper;
 import nl.capaxit.jaxrsamf.jaxrs.response.GenericResponse;
 import nl.capaxit.jaxrsamf.validation.ValidationResult;
 import nl.capaxit.jaxrsamf.validation.WebApplicationExceptionFactory;
-import nl.capaxit.jaxrsamf.validation.person.PersonValidator;
+import nl.capaxit.jaxrsamf.person.validation.PersonValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,7 @@ import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Person controller. Content negotiaton is done using the Accept (what the client wants as response) and
@@ -32,23 +33,15 @@ import java.util.Locale;
  * Versioning using the URL:
  *
  * <ul>
- *     <li>Version mapping can be done usign jax-rs,</li>
- *     <li>It is clear which version of a resource is requested</li>
- *     <li>For clients it is easier to use URL versioning scheme and they can make no mistakes by omitting for example the version.</li>
+ *     <li>jax-rs does not accept @Produced using accept header wildcards.</li>
+ *     <li>It is harder to see which version of a resource is requested.</li>
+ *     <li>For clients it is easier to use URL versioning scheme.</li>
  *     <li>Felixibility in versioning individual resources.</li>
  * </ul>
  *
  * Why no version in context-root
  * <ul>
  *     <li>Less flesibility to version individual resources. With every new version all resources have the new version in the context root.</li>
- *     <li>Multiple versions require mutiple context-roots ie. multiple servlets (jax-rs) applications or multiple wars.</li>
- * </ul>
- *
- * Accept-header
- * <ul>
- *     <li>PRO: URL remains the same whatever the version is.</li>
- *     <li>CON: More code to differentiate versions since jax-rs cannot use Accept header version for mapping resources.</li>
- *     <li>PRO: Flexibility for individual resources.</li>
  * </ul>
  *
  * But the policy is: no multiple versions unless...
@@ -57,8 +50,8 @@ import java.util.Locale;
  */
 @Component
 @Consumes({MediaType.APPLICATION_JSON})
-@Produces("application/json;version=1")
-@Path("/v1/persons")
+@Produces("application/json;version=2")
+@Path("/v2/persons")
 public class PersonResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonResource.class);
 
@@ -71,6 +64,8 @@ public class PersonResource {
 
     @Context
     private UriInfo uriInfo;
+
+    private static final Pattern VERSION_PATTERN = Pattern.compile(".*version=(\\d)");
 
     @GET
     public Response retrieve(@Context final HttpServletRequest request) {

@@ -1,18 +1,21 @@
-package nl.capaxit.jaxrsamf.resources.v2;
+package nl.capaxit.jaxrsamf.person;
 
-import nl.capaxit.jaxrsamf.domain.Person;
-import nl.capaxit.jaxrsamf.domain.mapper.InMemoryPersonMapper;
-import nl.capaxit.jaxrsamf.domain.mapper.PersonMapper;
+import nl.capaxit.jaxrsamf.generic.ETagMemoryCache;
+import nl.capaxit.jaxrsamf.jaxrs.MediaTypes;
 import nl.capaxit.jaxrsamf.jaxrs.response.GenericResponse;
+import nl.capaxit.jaxrsamf.person.domain.Person;
+import nl.capaxit.jaxrsamf.person.mapper.InMemoryPersonMapper;
+import nl.capaxit.jaxrsamf.person.mapper.PersonMapper;
+import nl.capaxit.jaxrsamf.person.validation.PersonValidator;
 import nl.capaxit.jaxrsamf.validation.ValidationResult;
 import nl.capaxit.jaxrsamf.validation.WebApplicationExceptionFactory;
-import nl.capaxit.jaxrsamf.validation.person.PersonValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +24,6 @@ import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 /**
  * Person controller. Content negotiaton is done using the Accept (what the client wants as response) and
@@ -33,15 +35,23 @@ import java.util.regex.Pattern;
  * Versioning using the URL:
  *
  * <ul>
- *     <li>jax-rs does not accept @Produced using accept header wildcards.</li>
- *     <li>It is harder to see which version of a resource is requested.</li>
- *     <li>For clients it is easier to use URL versioning scheme.</li>
+ *     <li>Version mapping can be done usign jax-rs,</li>
+ *     <li>It is clear which version of a resource is requested</li>
+ *     <li>For clients it is easier to use URL versioning scheme and they can make no mistakes by omitting for example the version.</li>
  *     <li>Felixibility in versioning individual resources.</li>
  * </ul>
  *
  * Why no version in context-root
  * <ul>
  *     <li>Less flesibility to version individual resources. With every new version all resources have the new version in the context root.</li>
+ *     <li>Multiple versions require mutiple context-roots ie. multiple servlets (jax-rs) applications or multiple wars.</li>
+ * </ul>
+ *
+ * Accept-header
+ * <ul>
+ *     <li>PRO: URL remains the same whatever the version is.</li>
+ *     <li>CON: More code to differentiate versions since jax-rs cannot use Accept header version for mapping resources.</li>
+ *     <li>PRO: Flexibility for individual resources.</li>
  * </ul>
  *
  * But the policy is: no multiple versions unless...
@@ -49,9 +59,9 @@ import java.util.regex.Pattern;
  * @author Jamie Craane
  */
 @Component
-@Consumes({MediaType.APPLICATION_JSON})
-@Produces("application/json;version=2")
-@Path("/v2/persons")
+@Consumes({MediaType.APPLICATION_JSON, MediaTypes.APPLICATION_X_AMF})
+@Produces({"application/json;version=1", MediaTypes.APPLICATION_X_AMF})
+@Path("/v1/persons")
 public class PersonResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonResource.class);
 
@@ -65,19 +75,29 @@ public class PersonResource {
     @Context
     private UriInfo uriInfo;
 
-    private static final Pattern VERSION_PATTERN = Pattern.compile(".*version=(\\d)");
-
     @GET
-    public Response retrieve(@Context final HttpServletRequest request) {
+    public Response retrieve(@Context final HttpServletRequest httpServletRequest, @Context final Request request) {
         LOGGER.debug("retrieve(){}");
         final List<Person> persons = personMapper.retrievePersons();
+
+        final StringBuilder sb = new StringBuilder();
         for (final Person person : persons) {
             person.setDetails(Link.fromUri(UriBuilder.fromResource(PersonResource.class).path(Long.toString(person.getId())).build()).build());
+            sb.append(person);
         }
 
-        final URI self = UriBuilder.fromResource(PersonResource.class).build();
-        final Link link = Link.fromUri(self).build();
-        return Response.ok().entity(new GenericResponse<>(link, persons)).build();
+        final String ETag = DigestUtils.md5DigestAsHex(sb.toString().getBytes());
+        final EntityTag entityTag = new EntityTag(ETag);
+        final Response.ResponseBuilder builder = request.evaluatePreconditions(entityTag);
+
+        if (builder == null) {
+            final URI self = UriBuilder.fromResource(PersonResource.class).build();
+            final Link link = Link.fromUri(self).build();
+            return Response.ok().tag(ETag).entity(new GenericResponse<>(link, persons)).build();
+        }
+
+        ETagMemoryCache.getInstance().setPersonsETag(ETag);
+        return builder.build();
     }
 
     /**

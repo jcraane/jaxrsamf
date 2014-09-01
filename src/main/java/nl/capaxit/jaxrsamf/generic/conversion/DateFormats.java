@@ -1,4 +1,4 @@
-package nl.capaxit.jaxrsamf.domain.conversion;
+package nl.capaxit.jaxrsamf.generic.conversion;
 
 /**
  * Holds the various date formats.

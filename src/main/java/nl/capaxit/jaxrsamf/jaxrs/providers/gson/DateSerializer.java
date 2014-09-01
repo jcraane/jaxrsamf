@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import nl.capaxit.jaxrsamf.domain.conversion.DateFormats;
+import nl.capaxit.jaxrsamf.generic.conversion.DateFormats;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;

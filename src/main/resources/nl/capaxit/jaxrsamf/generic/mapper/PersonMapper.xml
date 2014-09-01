@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="nl.capaxit.jaxrsamf.domain.mapper.PersonMapper">
-    <resultMap id="resultPerson" type="nl.capaxit.jaxrsamf.domain.Person">
+<mapper namespace="nl.capaxit.jaxrsamf.person.mapper.PersonMapper">
+    <resultMap id="resultPerson" type="nl.capaxit.jaxrsamf.person.domain.Person">
         <result property="id" column="id"/>
         <result property="firstName" column="firstname"/>
         <result property="lastName" column="lastname"/>

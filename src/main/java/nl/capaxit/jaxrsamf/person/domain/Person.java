@@ -1,4 +1,4 @@
-package nl.capaxit.jaxrsamf.domain;
+package nl.capaxit.jaxrsamf.person.domain;
 
 import javax.ws.rs.core.Link;
 import javax.xml.bind.annotation.XmlAccessType;

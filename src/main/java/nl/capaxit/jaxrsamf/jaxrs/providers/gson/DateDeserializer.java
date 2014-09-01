@@ -4,7 +4,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import nl.capaxit.jaxrsamf.domain.conversion.DateFormats;
+import nl.capaxit.jaxrsamf.generic.conversion.DateFormats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

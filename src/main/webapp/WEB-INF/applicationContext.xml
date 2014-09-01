@@ -20,7 +20,7 @@
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource" p:basename="messages"/>
 
     <bean id="personMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
-        <property name="mapperInterface" value="nl.capaxit.jaxrsamf.domain.mapper.PersonMapper"/>
+        <property name="mapperInterface" value="nl.capaxit.jaxrsamf.person.mapper.PersonMapper"/>
         <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
     </bean>
 </beans>

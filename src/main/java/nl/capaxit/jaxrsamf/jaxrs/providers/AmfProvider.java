@@ -3,7 +3,7 @@ package nl.capaxit.jaxrsamf.jaxrs.providers;
 import flex.messaging.io.SerializationContext;
 import flex.messaging.io.amf.Amf3Input;
 import flex.messaging.io.amf.Amf3Output;
-import nl.capaxit.jaxrsamf.resources.MediaTypes;
+import nl.capaxit.jaxrsamf.jaxrs.MediaTypes;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;

@@ -1,6 +1,6 @@
-package nl.capaxit.jaxrsamf.domain.mapper;
+package nl.capaxit.jaxrsamf.person.mapper;
 
-import nl.capaxit.jaxrsamf.domain.Person;
+import nl.capaxit.jaxrsamf.person.domain.Person;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
