@@ -1,4 +1,4 @@
-package nl.capaxit.jaxrsamf.resources;
+package nl.capaxit.jaxrsamf.resources.v2;
 
 import nl.capaxit.jaxrsamf.domain.Person;
 import nl.capaxit.jaxrsamf.domain.mapper.InMemoryPersonMapper;
@@ -33,23 +33,15 @@ import java.util.regex.Pattern;
  * Versioning using the URL:
  *
  * <ul>
- *     <li>Version mapping can be done usign jax-rs,</li>
- *     <li>It is clear which version of a resource is requested</li>
- *     <li>For clients it is easier to use URL versioning scheme and they can make no mistakes by omitting for example the version.</li>
+ *     <li>jax-rs does not accept @Produced using accept header wildcards.</li>
+ *     <li>It is harder to see which version of a resource is requested.</li>
+ *     <li>For clients it is easier to use URL versioning scheme.</li>
  *     <li>Felixibility in versioning individual resources.</li>
  * </ul>
  *
  * Why no version in context-root
  * <ul>
  *     <li>Less flesibility to version individual resources. With every new version all resources have the new version in the context root.</li>
- *     <li>Multiple versions require mutiple context-roots ie. multiple servlets (jax-rs) applications or multiple wars.</li>
- * </ul>
- *
- * Accept-header
- * <ul>
- *     <li>PRO: URL remains the same whatever the version is.</li>
- *     <li>CON: More code to differentiate versions since jax-rs cannot use Accept header version for mapping resources.</li>
- *     <li>PRO: Flexibility for individual resources.</li>
  * </ul>
  *
  * But the policy is: no multiple versions unless...
@@ -58,8 +50,8 @@ import java.util.regex.Pattern;
  */
 @Component
 @Consumes({MediaType.APPLICATION_JSON})
-@Produces("application/json;version=1")
-@Path("/v1/persons")
+@Produces("application/json;version=2")
+@Path("/v2/persons")
 public class PersonResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonResource.class);
 
