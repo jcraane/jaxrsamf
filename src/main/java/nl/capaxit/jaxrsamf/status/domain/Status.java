@@ -13,16 +13,29 @@ import java.util.Map;
 public class Status implements Serializable {
     private static final long serialVersionUID = 7847992967542748950L;
 
-    private final Map<String, String> ETags = new HashMap<>(15);
+    private final Map<String, String> ETags;
 
-    public void addEtag(final String name, final String ETag) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name is null or empty.");
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(ETag), "ETag is null or empty.");
-
-        ETags.put(name, ETag);
+    private Status(final Map<String, String> ETags) {
+        this.ETags = ETags;
     }
 
     public Map<String, String> getETags() {
         return ETags;
+    }
+
+    public static class StatusBuilder {
+        private final Map<String, String> ETags = new HashMap<>(15);
+
+        public StatusBuilder eTag(final String name, final String ETag) {
+            Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "name is null or empty.");
+            Preconditions.checkArgument(!Strings.isNullOrEmpty(ETag), "ETag is null or empty.");
+
+            ETags.put(name, ETag);
+            return this;
+        }
+
+        public Status build() {
+            return new Status(ETags);
+        }
     }
 }

@@ -1,6 +1,5 @@
 package nl.capaxit.jaxrsamf.generic.filter;
 
-import com.google.common.base.Strings;
 import nl.capaxit.jaxrsamf.generic.ETagMemoryCache;
 import nl.capaxit.jaxrsamf.jaxrs.response.GenericResponse;
 import nl.capaxit.jaxrsamf.status.domain.Status;
@@ -19,17 +18,7 @@ public class StatusResponseWriter implements WriterInterceptor {
     @Override
     public void aroundWriteTo(final WriterInterceptorContext context) throws IOException, WebApplicationException {
         final GenericResponse response = (GenericResponse) context.getEntity();
-
-        final Status status = new Status();
-        String personsETag = ETagMemoryCache.getInstance().getPersonsETag();
-        if (Strings.isNullOrEmpty(personsETag)) {
-            personsETag = "NotComputed";
-        }
-
-        status.addEtag("persons", personsETag);
-
-        response.addMeta(status);
-
+        response.addMeta(new Status.StatusBuilder().eTag("persons", ETagMemoryCache.getInstance().getPersonsETag()).build());
         context.proceed();
     }
 }

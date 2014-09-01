@@ -1,5 +1,7 @@
 package nl.capaxit.jaxrsamf.generic;
 
+import com.google.common.base.Strings;
+
 /**
  * Created by jamiecraane on 01/09/14.
  */
@@ -13,7 +15,7 @@ public class ETagMemoryCache {
     }
 
     public String getPersonsETag() {
-        return personsETag;
+        return Strings.isNullOrEmpty(personsETag) ? "NotComputed" : personsETag;
     }
 
     public void setPersonsETag(final String personsETag) {

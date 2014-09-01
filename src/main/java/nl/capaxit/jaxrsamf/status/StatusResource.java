@@ -1,6 +1,5 @@
 package nl.capaxit.jaxrsamf.status;
 
-import com.google.common.base.Strings;
 import nl.capaxit.jaxrsamf.generic.ETagMemoryCache;
 import nl.capaxit.jaxrsamf.jaxrs.MediaTypes;
 import nl.capaxit.jaxrsamf.jaxrs.response.GenericResponse;
@@ -29,14 +28,10 @@ public class StatusResource {
     @GET
     public Response status() {
         LOGGER.debug("status");
-
-        final Status status = new Status();
-        String personsETag = ETagMemoryCache.getInstance().getPersonsETag();
-        if (Strings.isNullOrEmpty(personsETag)) {
-            personsETag = "NotComputed";
-        }
-
-        status.addEtag("persons", personsETag);
-        return Response.ok().entity(new GenericResponse(status)).build();
+        return Response.ok().entity(
+                new GenericResponse(
+                        new Status.StatusBuilder().eTag("persons", ETagMemoryCache.getInstance().getPersonsETag()).build()
+                )
+        ).build();
     }
 }
