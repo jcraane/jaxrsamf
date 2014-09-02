@@ -18,7 +18,7 @@ public class StatusResponseWriter implements WriterInterceptor {
     @Override
     public void aroundWriteTo(final WriterInterceptorContext context) throws IOException, WebApplicationException {
         final GenericResponse response = (GenericResponse) context.getEntity();
-        response.addMeta(new Status.StatusBuilder().eTag("persons", ETagMemoryCache.getInstance().getPersonsETag()).build());
+        response.addMeta("resourceStatus", (java.io.Serializable) new Status.StatusBuilder().eTag("persons", ETagMemoryCache.getInstance().getPersonsETag()).build().getEtags());
         context.proceed();
     }
 }

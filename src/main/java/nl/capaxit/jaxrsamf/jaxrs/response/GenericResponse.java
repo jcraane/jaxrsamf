@@ -2,8 +2,8 @@ package nl.capaxit.jaxrsamf.jaxrs.response;
 
 import javax.ws.rs.core.Link;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by jamiecraane on 17/08/14.
@@ -11,7 +11,7 @@ import java.util.Set;
 public class GenericResponse<T> implements Serializable {
     private Link link;
     private T payload;
-    private Set<Serializable> meta = new HashSet<>(5);
+    private Map<String, Serializable> meta = new HashMap<>(5);
 
     public GenericResponse(final Link link, final T payload) {
         this.link = link;
@@ -22,11 +22,11 @@ public class GenericResponse<T> implements Serializable {
         this.payload = payload;
     }
 
-    public Set<Serializable> getMeta() {
+    public Map<String, Serializable> getMeta() {
         return meta;
     }
 
-    public void addMeta(final Serializable value) {
-        meta.add(value);
+    public void addMeta(final String key, final Serializable value) {
+        meta.put(key, value);
     }
 }

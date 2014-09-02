@@ -13,14 +13,14 @@ import java.util.Map;
 public class Status implements Serializable {
     private static final long serialVersionUID = 7847992967542748950L;
 
-    private final Map<String, String> ETags;
+    private final Map<String, String> etags;
 
-    private Status(final Map<String, String> ETags) {
-        this.ETags = ETags;
+    private Status(final Map<String, String> etags) {
+        this.etags = etags;
     }
 
-    public Map<String, String> getETags() {
-        return ETags;
+    public Map<String, String> getEtags() {
+        return etags;
     }
 
     public static class StatusBuilder {
